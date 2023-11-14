@@ -1,0 +1,42 @@
+server:
+  # 服务端口
+  port: 10905
+  tomcat:
+    max-http-post-size: 100MB  #请求参数长度
+    max-http-form-post-size: 100MB #form表单长度
+# 管理端点
+management:
+  server:
+    port: 54305
+
+# Spring 配置相关
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://172.16.210.77:5432/geovis_cim?useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true
+    username: postgres
+    password: postgres
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 256MB
+  static-dir: /data/luoning/static
+  web:
+    resources:
+      static-locations:
+        - file://${spring.static-dir}
+        - classpath:/static/
+        - classpath:/public/
+        - classpath:/resources/
+        - classpath:/META-INF/resources/
+
+#本地+一体机路径
+file:
+  uploadPathIll: /data/luoning/imagePathIll/
+  uploadPathCon: /data/luoning/imagePathCon/
+  excelIll: /data/luoning/excelIll/
+  excelCon: /data/luoning/excelCon/
+
+font:
+  chinese: /usr/share/fonts/chinese/

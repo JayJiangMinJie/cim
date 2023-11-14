@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.geovis.luoning.mapper.ConstructionPlanMapper">
+    <insert id="insertOne" useGeneratedKeys="true" parameterType="com.geovis.luoning.po.ConstructionPlanPO">
+        insert into construction_plan(plan_code, land_use, land_use_code, address, land_area, images_path, plan_geo, construction_status)
+        values (#{constructionPlanPO.planCode},#{constructionPlanPO.landUse},#{constructionPlanPO.landUseCode},
+                #{constructionPlanPO.address},#{constructionPlanPO.landArea},#{constructionPlanPO.imagesPath},
+                #{constructionPlanPO.planGeo, typeHandler=com.geovis.luoning.mybatis.typehandler.PolygonTypeHandler},
+                #{constructionPlanPO.constructionStatus}
+               )
+    </insert>
+
+    <select id="selectConstructionPlanById" resultType="com.geovis.luoning.po.ConstructionPlanPO">
+        select * from construction_plan where id = #{id};
+    </select>
+
+    <select id="selectConstructionPlan" resultType="com.geovis.luoning.po.ConstructionPlanPO">
+        select * from construction_plan ;
+    </select>
+
+    <select id="selectAllConstructionPlan" resultType="com.geovis.luoning.po.ConstructionPlanPO" resultMap="constructionPlanResultMap">
+        select * from construction_plan
+        where 1=1
+        <if test="searchContent != null and searchContent != ''">
+            and (land_use like CONCAT('%', #{searchContent}, '%')
+            or address like CONCAT('%', #{searchContent}, '%')
+            or land_use_code like CONCAT('%', #{searchContent}, '%'))
+        </if>;
+    </select>
+
+<!--    <select id="selectByPage" resultType="com.geovis.luoning.po.ConstructionPlanPO">-->
+<!--        select * from construction_plan-->
+<!--        where 1=1-->
+<!--        <if test="searchContent != null and searchContent != ''">-->
+<!--            and (land_use like %#{searchContent}% or land_use like %#{searchContent}% or land_use like %#{searchContent}%)-->
+<!--        </if>-->
+<!--    </select>-->
+    <select id="selectByPage" resultType="com.geovis.luoning.po.ConstructionPlanPO" resultMap="constructionPlanResultMap">
+        select * from construction_plan
+        where 1=1
+        <if test="searchContent != null and searchContent != ''">
+            and (land_use like CONCAT('%', #{searchContent}, '%')
+            or address like CONCAT('%', #{searchContent}, '%')
+            or land_use_code like CONCAT('%', #{searchContent}, '%'))
+        </if>
+    </select>
+
+    <resultMap id="constructionPlanResultMap" type="com.geovis.luoning.po.ConstructionPlanPO">
+        <!-- 其他字段映射 -->
+        <result property="planGeo" column="plan_geo" javaType="org.postgis.Polygon" typeHandler="com.geovis.luoning.mybatis.typehandler.PolygonTypeHandler"/>
+    </resultMap>
+
+</mapper>

@@ -1,0 +1,50 @@
+server:
+  # 服务端口
+  port: 10907
+  tomcat:
+    max-http-post-size: 100MB  #请求参数长度
+    max-http-form-post-size: 100MB #form表单长度
+# 管理端点
+management:
+  server:
+    port: 54305
+
+# Spring 配置相关
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/geovis_cim?useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true
+    username: postgres
+    password: root
+  # 文件上传总配置
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 256MB
+  static-dir: D:\data\geovis\linyi\data\static
+  web:
+    resources:
+      static-locations:
+        - file://${spring.static-dir}
+        - classpath:/static/
+        - classpath:/public/
+        - classpath:/resources/
+        - classpath:/META-INF/resources/
+
+url:
+  device: http://10.176.126.121:800/bd/api/v1/device/queryByCoordinate
+
+#本地+一体机路径
+file:
+  uploadPathIll: D:\项目数据汇总\CIM项目\imagePathIll\
+  uploadPathCon: D:\项目数据汇总\CIM项目\imagePathCon\
+  excelIll: D:\项目数据汇总\CIM项目\excelIll\
+  excelCon: D:\项目数据汇总\CIM项目\excelCon\
+
+  #虚拟机路径
+#  uploadPath: /data/geovis/yhfw/file
+#  taskPath: /data/geovis/yhfw/file/task/
+#  searchFilePath: /data/geovis/yhfw/file/task/fileGenerate/
+font:
+  chinese: C:\Windows\Fonts\

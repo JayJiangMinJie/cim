@@ -1,0 +1,202 @@
+server:
+  # 2.3.X 添加优雅停机 命令使用kill -15 ｛pid｝
+  shutdown: graceful
+
+# 管理端点
+management:
+  endpoints.web:
+    base-path: '/actuator'
+    exposure:
+      include: '*'
+
+# Spring 配置相关
+spring:
+  profiles:
+    active: @profilesActive@
+  application:
+    name: @project.artifactId@
+  # 设置允许循环引用
+  main.allow-circular-references: true
+  # 解决spring boot 升级到2.6.x和swagger冲突bug
+  mvc.pathmatch.matching-strategy: ant-path-matcher
+  #json日期格式
+#  jackson:
+#    date-format: yyyy-MM-dd HH:mm:ss
+#    time-zone: GMT+8
+#    serialization:
+#      write-dates-as-timestamps: true
+#  #排除自动配置
+#  autoconfigure.exclude:
+#    - com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure
+#    - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+#    - org.redisson.spring.starter.RedissonAutoConfiguration
+#    - org.redisson.spring.cache.RedissonCacheStatisticsAutoConfiguration
+  servlet:
+    multipart:
+      #      单个文件最大限制 类型是datasize，单位b
+      max-file-size: 314572800
+      #      单次请求最大限制
+      max-request-size: 314572800
+  #数据源配置
+  datasource:
+    druid:
+      #--新版许需要加jvm参数 -Ddruid.pgsql.usePingMethod=false 防止打印连接大于60s的警告
+      # 初始化大小，最小，最大
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      max-wait: 30000
+      #test-while-idle 为true时打开，做检测
+      validation-query: SELECT 1
+      test-while-idle: false
+      time-between-eviction-runs-millis: 30000
+      min-evictable-idle-time-millis: 60000
+      test-on-borrow: false
+      test-on-return: false
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      filters: stat,slf4j
+      connection-properties:
+        "[druid.stat.mergeSql]": false
+        "[druid.stat.slowSqlMillis]": 5000
+      use-global-data-source-stat: true
+      output:
+        ansi:
+          # junit日志输出颜色
+          enabled: always
+
+# mybatis-plus 配置
+mybatis-plus:
+  mapper-locations: classpath:/mapper/**/*.xml
+  # 枚举扫描 支持统配符 * 或者 ; 分割
+#  type-enums-package: cn.com.geovis.firemonitoring.**.entity.enums;cn.com.geovis.firemonitoring.**.entity.enums.*
+#  type-aliases-package: cn.com.geovis.firemonitoring.**.entity
+#  type-handlers-package: cn.com.geovis.firemonitoring.**.config.db.handler
+  global-config:
+    banner: false
+    db-config:
+      # 在insert的时候的字段验证策略
+      insert-strategy: NOT_NULL
+      # 在update的时候的字段验证策略
+      update-strategy: NOT_NULL
+      # where条件的字段验证策略
+      where-strategy: NOT_NULL
+  configuration:
+    call-setters-on-nulls: true
+    # 是否启动缓存
+    cache-enabled: true
+    # 是否开启自动驼峰命名规则
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# 配置http host安全名单,防止http host攻击
+http-host:
+  enable: false
+  # http host安全名单,前缀匹配
+  safe-hosts:
+    - localhost
+    - 127.0.0.1
+
+# 请求客户端限制配置
+http-client-limit:
+  enable: false
+  # 是否允许referer和user-agents
+  allow-referer-and-user-agents: true
+  # 安全名单未开启时，是否允许空的referer和user-agents
+  allow-empty-referer-and-user-agents: true
+  # 是否设置安全名单过滤
+  use-white-list: false
+  # 安全referer列表,前缀匹配
+  safe-referers:
+    - http://localhost
+    - https://localhost
+    - http://127.0.0.1
+    - https://127.0.0.1
+  # 安全user-agent列表,前缀匹配
+  safe-user-agents:
+    - ""
+
+# cors 跨域配置
+cors:
+  allowed-urls:
+    - '/**'
+  origins:
+    - '*'
+  headers:
+    - 'Authorization'
+    # 重定向 携带头
+    - 'content-type'
+  methods:
+    - "GET"
+    - "POST"
+    - "PUT"
+    - "DELETE"
+    - "PATCH"
+    - "OPTIONS"
+  credentials: true
+  max-age: 1209600
+
+# 防止XSS攻击
+xss:
+  # 过滤开关
+  enabled: true
+  # 默认转换类型（NONE:不处理，ESCAPE_UTF_8:转义，ESCAPE_UTF_8_MAJOR:转义主要...，RELAXED_CLEAN：宽松清除...）
+  default-escape-type: ESCAPE_UTF_8_MAJOR
+  # XSS 防御策略集合--匹配第一个
+  strategys:
+    - # 总XSS过滤
+      # 匹配链接
+      url-patterns: [ "/**" ]
+      # 转换类型（NONE:不处理，ESCAPE_UTF_8:转义...，RELAXED_CLEAN：宽松清除...）
+      escape-type: ESCAPE_UTF_8_MAJOR
+      # 排除链接（多个用逗号分隔）
+      url-excludes:
+        - "/static/**"
+      # 指定请求参数类型：0xf:所有，0x1：parameter参数，0x2：query参数，0x4：请求体，0x8：header请求头
+      request-value-type: 0x7
+
+# knife4j(swagger) 配置
+knife4j:
+  enable: true
+  #  documents:
+  #    - group: @project.version@
+  #      name: 一网四平台_接口文档
+  #      locations: classpath:sign/*
+  setting:
+    language: zh-CN
+    enable-swagger-models: true
+    enable-document-manage: true
+    swagger-model-name: 实体类列表
+    enable-version: false
+    enable-reload-cache-parameter: true
+    enable-after-script: true
+    enable-filter-multipart-api-method-type: POST
+    enable-filter-multipart-apis: true
+    enable-request-cache: true
+    enable-host: false
+    enable-host-text: "localhost:${server.port:8080}"
+    enable-home-custom: false
+    home-custom-location: classpath:markdown/home.md
+    enable-search: true
+    enable-footer: false
+    enable-footer-custom: false
+    footer-custom-content: "Copyright  2022-[中科星图股份有限公司](http://www.geovis.com.cn)"
+#    enable-dynamic-parameter: true
+    enable-debug: true
+    enable-open-api: true
+    enable-group: true
+  cors: false
+  production: false
+  basic:
+    enable: false
+    username: admin
+    password: 12334
+
+  # 系统配置
+system-config:
+  # 请求头会话信息参数
+  session-header-name: Authorization
+
+# logback配置文件路径 默认resources/logback-spring.xml
+logging.config: "classpath:logback-spring.xml"
+

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.geovis.luoning.mapper.IllegalBuildMapper">
+    <insert id="insertOne" useGeneratedKeys="true" keyProperty="id">
+        insert into illegal_build(illegal_build_type, illegal_build_status, illegal_build_code, build_staff, address, build_area, demolished_area, supervision_date, responsible_person, current_desc, recommended_measure, enforcement_start_date, enforcement_end_date, progress, photo_period, before_images_path, mid_images_path, after_images_path, longitude, latitude, height, town_street)
+        values (#{illegalBuildDTO.illegalBuildType},#{illegalBuildDTO.illegalBuildStatus},#{illegalBuildDTO.illegalBuildCode},#{illegalBuildDTO.buildStaff},#{illegalBuildDTO.address},#{illegalBuildDTO.buildArea},#{illegalBuildDTO.demolishedArea},#{illegalBuildDTO.supervisionDate},#{illegalBuildDTO.responsiblePerson},#{illegalBuildDTO.currentDesc},#{illegalBuildDTO.recommendedMeasure},#{illegalBuildDTO.enforcementStartDate},
+                #{illegalBuildDTO.enforcementEndDate},#{illegalBuildDTO.progress},#{illegalBuildDTO.photoPeriod},#{illegalBuildDTO.beforeImagesPath},#{illegalBuildDTO.midImagesPath},#{illegalBuildDTO.afterImagesPath},#{illegalBuildDTO.longitude},#{illegalBuildDTO.latitude},#{illegalBuildDTO.height},#{illegalBuildDTO.townStreet}
+        )
+    </insert>
+
+    <select id="selectIllegalBuildById" resultType="com.geovis.luoning.po.IllegalBuildPO">
+        select * from illegal_build where id = #{id};
+    </select>
+
+    <select id="selectIllegalBuild" resultType="com.geovis.luoning.po.IllegalBuildPO">
+        select * from illegal_build ;
+    </select>
+
+    <select id="selectByPage" resultType="com.geovis.luoning.po.IllegalBuildPO">
+        select * from illegal_build
+        where 1=1
+        <if test="illegalBuildStatus != null and illegalBuildStatus != ''">
+            and illegal_build_status = #{illegalBuildStatus}
+        </if>
+        <if test="illegalBuildType != null and illegalBuildType != ''">
+            and illegal_build_type = #{illegalBuildType}
+        </if>
+    </select>
+
+</mapper>
